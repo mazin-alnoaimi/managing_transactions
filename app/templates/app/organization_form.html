@@ -1,0 +1,18 @@
+{% extends "app/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Organization</legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+            {% if user.is_authenticated %}
+                <button class="btn btn-outline-info" type="submit">Save</button>
+            {% endif %}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
