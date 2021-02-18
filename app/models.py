@@ -106,7 +106,7 @@ class Application(models.Model):
         ('new', 'New'),
         ('renew', 'Renew'),
         ('modify', 'Modify'),
-        ('license_cancel', 'License Cancelation')
+        ('license_cancel', 'License Cancellation')
     )
 
     app_status_list = (
