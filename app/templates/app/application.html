@@ -9,7 +9,11 @@
               <a class="mr-2" href="#">{{ application.user_id.username.upper }}</a>
               <small class="text-muted">{{ application.app_date|date:"F d, Y" }}</small>
               {% if user.is_staff%}
-                <a class="mr-2 float-right" href="{% url 'application-update' application.id %}">Status:  {{ application.app_status }}</a>
+                {% if application.app_type == 'intial' %}
+                  <a class="mr-2 float-right" href="{% url 'application-intial-approval-update' application.id %}">Status:  {{ application.app_status }}</a>
+                {% else %}
+                  <a class="mr-2 float-right" href="{% url 'application-update' application.id %}">Status:  {{ application.app_status }}</a>
+                {% endif %}
               {% else %}
                 <a class="mr-2 float-right" href="#">Status:  {{ application.app_status }}</a>
               {% endif %}
@@ -19,15 +23,15 @@
             <table style="width:100%">
               <tr>
                 <td>Applicant Name</td>
-                <td>{{ application.org_id.applicant_id.fullname}}</td>
+                <td>{{ application.applicant_id.fullname}}</td>
                 <td>CPR</td>
-                <td>{{ application.org_id.applicant_id.cpr}} </td>
+                <td>{{ application.applicant_id.cpr}} </td>
               </tr>
               <tr>
                 <td>Mobile</td>
-                <td>{{ application.org_id.applicant_id.contact2}}</td>
+                <td>{{ application.applicant_id.contact2}}</td>
                 <td>Email</td>
-                <td>{{ application.org_id.applicant_id.email}} </td>
+                <td>{{ application.applicant_id.email}} </td>
               </tr>
               <tr>
                 <td></td>
@@ -37,9 +41,9 @@
               </tr>
               <tr>
                 <td>Org Name:</td>
-                <td>{{ application.org_id.full_en_name }}</td>
+                <td>{{ application.full_en_name }}</td>
                 <td>CR</td>
-                <td>{{ application.org_id.cr }} </td>
+                <td>{{ application.cr }} </td>
               </tr>
               <tr>
                 <td>App Type</td>
@@ -52,6 +56,6 @@
         </article>
     {% endfor %}
     {% if user.is_authenticated %}
-      <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'application-create' %}">New Application</a>
+      <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'application-intial-approval-create' %}">Request Intial Approval</a>
     {% endif %}
 {% endblock content %}

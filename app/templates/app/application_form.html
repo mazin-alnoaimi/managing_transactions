@@ -11,31 +11,50 @@
             <div class="form-group">
             {% if user.is_authenticated %}
                 {% if user.is_staff %}
-                    {% if application.app_status == 'Draft' %}
-                        <button class="btn btn-outline-info" type="submit">Generate Application Code</button>
-                    {% elif application.app_status == 'Submitted' %}
-                        <button class="btn btn-outline-info" type="submit">Violations Verification</button>
-                    {% elif application.app_status == 'Violations Verification' %}
-                        <button class="btn btn-outline-info" type="submit">Request Statements</button>
-                    {% elif application.app_status == 'Request Statements' %}
-                        <button class="btn btn-outline-info" type="submit">Inital Approval</button>
-                    {% elif application.app_status == 'Inital Approval' %}
-                        <button class="btn btn-outline-info" type="submit">Verify Documents</button>
-                    {% elif application.app_status == 'Verify Documents' %}
-                        <button class="btn btn-outline-info" type="submit">Issue the Decision</button>
-                    {% elif application.app_status == 'Issue the Decision' %}
-                        <button class="btn btn-outline-info" type="submit">Paying Fees</button>
-                    {% elif application.app_status == 'Paying New/Modify Fees' %}
-                        <button class="btn btn-outline-info" type="submit">Receive License</button>
-                    {% elif application.app_status == 'Paying Renewal Fees' %}
-                        <button class="btn btn-outline-info" type="submit">Receive License</button>
+                    {% if application.app_type == 'intial' %}
+                        {% if application.app_status == 'Draft' %}
+                            <button class="btn btn-outline-info" type="submit">Generate Application Code</button>
+                        {% elif application.app_status == 'Submitted' %}
+                            <button class="btn btn-outline-info" type="submit">Violations Verification</button>
+                        {% elif application.app_status == 'Violations Verification' %}
+                            <button class="btn btn-outline-info" type="submit">Request Statements</button>
+                        {% elif application.app_status == 'Request Statements' %}
+                            <button class="btn btn-outline-info" type="submit">Review Documents</button>
+                        {% elif application.app_status == 'Review Documents' %}
+                            <button class="btn btn-outline-info" type="submit">Request Manager Approval/Reject</button>
+                        {% elif application.app_status == 'Request Manager Approval/Rejcet' %}
+                            <button class="btn btn-outline-info" type="submit">Intial Approval Completed</button>
+                        {% elif application.app_status == 'Intial Approval' %}
+                        
+                            <p>Application has been closed, please check the status</p>
+                        {% endif %}
                     {% else %}
-                        <button class="btn btn-outline-info" type="submit">Cancelled License</button>
+                        {% if application.app_status == 'Draft' %}
+                            <button class="btn btn-outline-info" type="submit">Generate Application Code</button>
+                        {% elif application.app_status == 'Submitted' %}
+                            <button class="btn btn-outline-info" type="submit">Violations Verification</button>
+                        {% elif application.app_status == 'Violations Verification' %}
+                            <button class="btn btn-outline-info" type="submit">Request Statements</button>
+                        {% elif application.app_status == 'Request Statements' %}
+                            <button class="btn btn-outline-info" type="submit">Inital Approval</button>
+                        {% elif application.app_status == 'Inital Approval' %}
+                            <button class="btn btn-outline-info" type="submit">Verify Documents</button>
+                        {% elif application.app_status == 'Verify Documents' %}
+                            <button class="btn btn-outline-info" type="submit">Issue the Decision</button>
+                        {% elif application.app_status == 'Issue the Decision' %}
+                            <button class="btn btn-outline-info" type="submit">Paying Fees</button>
+                        {% elif application.app_status == 'Paying New/Modify Fees' %}
+                            <button class="btn btn-outline-info" type="submit">Receive License</button>
+                        {% elif application.app_status == 'Paying Renewal Fees' %}
+                            <button class="btn btn-outline-info" type="submit">Receive License</button>
+                        {% else %}
+                            <button class="btn btn-outline-info" type="submit">Cancelled License</button>
+                        {% endif %}
                     {% endif %}
                 {% else %}
                     <button class="btn btn-outline-info" type="submit" name="save-btn">Save</button>
                     
-                    <button class="btn btn-outline-info" type="submit" name="cancel-btn">Save</button>
+                    <button class="btn btn-outline-info" type="submit" name="cancel-btn">Cancel</button>
                 {% endif %}
             {% endif %}
             </div>

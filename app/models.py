@@ -82,8 +82,8 @@ class Organization(models.Model):
     contact1 = models.CharField(_("Phone"), max_length=50)
     contact2 = models.CharField(_("Fax"), max_length=50)
     email = models.EmailField(_("Email"), max_length=254)
-    applicant_id = models.ForeignKey(Applicant, verbose_name=_(""), on_delete=models.CASCADE)
-    user_id = models.ForeignKey(User, verbose_name=_(""), on_delete=models.CASCADE)
+    applicant_id = models.ForeignKey(Applicant, verbose_name=_(""), on_delete=models.CASCADE, blank=True)
+    user_id = models.ForeignKey(User, verbose_name=_(""), on_delete=models.CASCADE, blank=True)
 
     # cr_doc = models.FileField(_("CR Doc"), upload_to='doc_library', max_length=100) 
     # bank_statement_doc = models.FileField(_("Bank Statement Doc"), upload_to='doc_library', max_length=100)
@@ -103,8 +103,9 @@ class Organization(models.Model):
 class Application(models.Model):
 
     app_type_list = (
+        ('intial', 'Intial Approval'),
         ('new', 'New'),
-        ('renew', 'Renew'),
+        ('renewal', 'Renewal'),
         ('modify', 'Modify'),
         ('license_cancel', 'License Cancellation')
     )
@@ -136,31 +137,56 @@ class Application(models.Model):
         ('manager_cheque', 'Manager Cheque'),
         ('bank_guarantee', 'Bank Guarantee')
     )
+
+    intial_approval_list = (
+        ('approve', 'Approve'),
+        ('reject', 'Reject')
+    )
     app_no = models.CharField(_("Application No"), max_length=50)
     app_date = models.DateField(_("Application Date"), auto_now=False, auto_now_add=False)
     app_type = models.CharField(_("Application Type"), max_length=50, choices=app_type_list)
-    app_status = models.CharField(_("Status"), max_length=50, default='draft')
+    app_status = models.CharField(_("Status"), max_length=50, default='Draft')
     activty_type = models.CharField(_("Activity Type"), max_length=50, choices=activity_type_list)
-    financial_guarantee = models.CharField(_("Financial Guarantee")
-                                            , max_length=50, choices=financial_guarantee_list)
-    financial_guarantee_expiry_date = models.DateField(_("Financial Guarantee Expiry Date")
-                                                        , auto_now=False, auto_now_add=False)
-    # signature = models.BinaryField(_("Signature"))
-    # signature_date = models.DateField(_("Submit Date"), auto_now=False, auto_now_add=False)
+    staff_comments = models.TextField(_("Comments"), blank=True)
+    manager_comments = models.TextField(_("Manager Comments"), blank=True)
+    intial_approval = models.CharField(_("Manager Decision"), max_length=50, choices=intial_approval_list, blank=True)
     
-    # rent_doc = models.FileField(_("Rental Agreement Doc"), upload_to='doc_library', max_length=100)
-    # ewa_bill_doc = models.FileField(_("EWA Bill Doc"), upload_to='doc_library', max_length=100)
-    # moh_approval_cert = models.FileField(_("MOH Approval Accomodation Certificate"), upload_to='doc_library', max_length=100)
-    # mol_approval_cert = models.FileField(_("MOL Approval Certificate"), upload_to='doc_library', max_length=100)
-    # employment_office_receipt = models.FileField(_("Employment Office Receipt"), upload_to='doc_library', max_length=100)
-    # license_cancelication_doc = models.FileField(_("License Cancelication Doc"), upload_to='doc_library', max_length=100)
+    financial_guarantee = models.CharField(_("Financial Guarantee"), max_length=50, choices=financial_guarantee_list)
+    financial_guarantee_expiry_date = models.DateField(_("Financial Guarantee Expiry Date"), null=True, blank=True)
+
+    cert1_doc = models.FileField(_("MOIS Cert"), upload_to='doc_library', max_length=100, default='')
+    cert2_doc = models.FileField(_("MOH Cert"), upload_to='doc_library', max_length=100, default='')
+    cert3_doc = models.FileField(_("MOL Cert"), upload_to='doc_library', max_length=100, default='')
+
+    cr_rent_doc = models.FileField(_("CR Rental Agreement Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    fh_rent_doc = models.FileField(_("Temp FH Rental Agreement Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
+
+    cr_ewa_bill_doc = models.FileField(_("CR EWA Bill Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    fh_ewa_bill_doc = models.FileField(_("Temp FH EWA Bill Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
+
+    employment_office_receipt = models.FileField(_("Employment Office Receipt"), upload_to='doc_library', max_length=100, null=True, blank=True)
     # bank_announcement_doc = models.FileField(_("Bank Announcement Doc"), upload_to='doc_library', max_length=100)
 
-    # emp_id = models.ForeignKey(User, verbose_name=_("Employee Name"), on_delete=models.CASCADE)   
-    # emp_name = models.CharField(_('Approved By'), max_length=50) 
-    # emp_approval_date = models.DateField(_("Approval Date"), auto_now=False, auto_now_add=False)
-    org_id = models.ForeignKey(Organization, verbose_name=_("Organization Name"), on_delete=models.CASCADE)
-    user_id = models.ForeignKey(User, verbose_name=_(""), on_delete=models.CASCADE)
+    # start -- org details
+    cr = models.CharField(_("CR No"), max_length=50, blank=True)
+    cr_reg_date = models.DateField(_("Registration Date"), null=True, blank=True)
+    full_en_name = models.CharField(_("Commercial Eng Name"), max_length=250, default='')
+    full_ar_name = models.CharField(_("Commercial Arb Name"), max_length=250, default='')
+    license_no = models.CharField(_("License No"), max_length=50, default='')
+    license_expiry_date = models.DateField(_("License Expiry Date"), null=True, blank=True)
+    flat_no = models.IntegerField(_("Flat No"), default=0)
+    building_no = models.IntegerField(_("Building No"), default=0)
+    road_no = models.IntegerField(_("Road No"), default=0)
+    area = models.CharField(_("Area"), max_length=50, default='')
+    contact1 = models.CharField(_("Phone"), max_length=50, default='')
+    contact2 = models.CharField(_("Fax"), max_length=50, default='')
+    email = models.EmailField(_("Email"), max_length=254, default='')
+    # end -- org details
+
+    # org_id = models.ForeignKey(Organization, verbose_name=_("Organization Name"), on_delete=models.CASCADE, blank=True)
+
+    applicant_id = models.ForeignKey(Applicant, verbose_name=_("Applicant Name"), on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, verbose_name=_(""), on_delete=models.CASCADE, blank=True)
 
     class Meta:
         verbose_name = _("Application")
