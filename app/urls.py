@@ -17,7 +17,7 @@ from .views import (
     ApplicationListView,
     ApplicationDetailView,
     ApplicationCreateView,
-    ApplicationIntialApprovalCreateView,,
+    ApplicationIntialApprovalCreateView,
     ApplicationFinalApprovalCreateView,
     ApplicationRenewalCreateView,
     ApplicationRevokeCreateView,
@@ -48,7 +48,7 @@ urlpatterns = [
     path('application/', ApplicationListView.as_view(), name='application-list'),
     path('application/<int:pk>/', ApplicationDetailView.as_view(), name='application-detail'),
     path('application/new/', ApplicationCreateView.as_view(), name='application-create'),
-    
+
     path('application/new_intial_approval/', ApplicationIntialApprovalCreateView.as_view(), name='application-intial-approval-create'),
     path('application/new_final_approval/', ApplicationFinalApprovalCreateView.as_view(), name='application-final-approval-create'),
     path('application/new_renewal/', ApplicationRenewalCreateView.as_view(), name='application-renewal-create'),
