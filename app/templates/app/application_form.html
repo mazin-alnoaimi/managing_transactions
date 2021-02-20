@@ -28,6 +28,25 @@
                         
                             <p>Application has been closed, please check the status</p>
                         {% endif %}
+                    {% elif application.app_type == 'final' %}
+                        {% if application.app_status == 'Draft' %}
+                            <button class="btn btn-outline-info" type="submit">Generate Application Code</button>
+                        {% elif application.app_status == 'Submitted' %}
+                            <button class="btn btn-outline-info" type="submit">Verify Documents</button>
+                        {% elif application.app_status == '>Verify Documents' %}
+                            <button class="btn btn-outline-info" type="submit">Verify Requirements</button>
+                        {% elif application.app_status == 'Verify Requirements' %}
+                            <button class="btn btn-outline-info" type="submit">Issue the Decision</button>
+                        {% elif application.app_status == 'Issue the Decision' %}
+                            <button class="btn btn-outline-info" type="submit">Payment Fees</button>
+                        {% elif application.app_status == 'Payment Fees' %}
+                            <button class="btn btn-outline-info" type="submit">Request Manager Approval/Reject</button>
+                        {% elif application.app_status == 'Request Manager Approval/Rejcet' %}
+                            <button class="btn btn-outline-info" type="submit">Final Approval Completed</button>
+                        {% elif application.app_status == 'Intial Approval' %}
+                        
+                            <p>Application has been closed, please check the status</p>
+                        {% endif %}
                     {% else %}
                         {% if application.app_status == 'Draft' %}
                             <button class="btn btn-outline-info" type="submit">Generate Application Code</button>

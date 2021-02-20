@@ -401,7 +401,7 @@ class ApplicationIntialApprovalCreateView(LoginRequiredMixin, CreateView):
         form.instance.app_no = 'Draft Application'
         form.instance.app_date = datetime.datetime.now().date()
         form.instance.app_status = 'Draft'
-        form.instance.app_type = 'intial'
+        form.instance.app_type = 'Intial Approval'
 
         #system should pass the applicant number 
         if form.instance.applicant_id:
@@ -472,26 +472,350 @@ class ApplicationIntialApprovalUpdateView(LoginRequiredMixin, UserPassesTestMixi
         else:
             return False
 
-# This view for 
-class ApplicationDocumentReview(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+
+# Final Approval
+class ApplicationFinalApprovalCreateView(LoginRequiredMixin, CreateView):
+    
     model = Application
     fields = [
-        'app_status',
-        'cr_rent_doc',
-        'fh_rent_doc',
-        'cr_ewa_bill_doc',
-        'fh_ewa_bill_doc',
+        'cr',
+        'full_en_name',
+        'flat_no',
+        'building_no',
+        'road_no',
+        'area',
+        'contact1',
+        'contact2',
+        'email',
+        'activty_type',
         'financial_guarantee',
         'financial_guarantee_expiry_date',
+        'cr_rent_doc',
+        'cr_ewa_bill_doc',
         'cert1_doc',
         'cert2_doc',
         'cert3_doc',
         'employment_office_receipt',
+        'fh_flat_no',
+        'fh_building_no',
+        'fh_road_no',
+        'fh_area',
+        'fh_contact1',
+        'fh_contact2',
+        'applicant_id',
         ]
 
     def form_valid(self, form):
-        if form.instance.app_status == 'Verify Documents':
+
+        form.instance.user_id = self.request.user
+        form.instance.app_no = 'Draft Application'
+        form.instance.app_date = datetime.datetime.now().date()
+        form.instance.app_status = 'Draft'
+        form.instance.app_type = 'Final Approval'
+
+        #system should pass the applicant number 
+        if form.instance.applicant_id:
+            # check if applicant has an application or has active license
+            if form.instance.applicant_id.has_application:
+                messages.warning(self.request, _('This applicant either received the license or has an application on going'))
+                return super(ApplicationFinalApprovalCreateView, self).form_invalid(form)
+            else:
+                form.instance.applicant_id.has_application = True
+        else:
+            messages.warning(self.request, _('Please select a applicant..'))
+            return super(ApplicationFinalApprovalCreateView, self).form_invalid(form)
+
+        return super(ApplicationFinalApprovalCreateView, self).form_valid(form)
+
+class ApplicationFinalApprovalUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Application
+    fields = [
+        'cr',
+        'full_en_name',
+        'flat_no',
+        'building_no',
+        'road_no',
+        'area',
+        'contact1',
+        'contact2',
+        'email',
+        'activty_type',
+        'financial_guarantee',
+        'financial_guarantee_expiry_date',
+        'cr_rent_doc',
+        'cr_ewa_bill_doc',
+        'cert1_doc',
+        'cert2_doc',
+        'cert3_doc',
+        'employment_office_receipt',
+        'fh_flat_no',
+        'fh_building_no',
+        'fh_road_no',
+        'fh_area',
+        'fh_contact1',
+        'fh_contact2',
+        'applicant_id',
+        ]
+
+    def form_valid(self, form):
+        if not form.instance.applicant_id.nationality == 'bahraini':
+            messages.warning(self.request, f'This application accept Bahrain nationality only')
+            return super(ApplicationFinalApprovalUpdateView, self).form_invalid(form)
+
+        if form.instance.app_status == 'Draft':
+            # generate numbers
+            form.instance.app_no = "APP/" + str(datetime.datetime.now().year) + "/" + "{:02d}".format(datetime.datetime.now().month) + "/" + "{:04d}".format(form.instance.id)
+            form.instance.app_status = "Submitted"
+
+        elif form.instance.app_status == 'Submitted':
+            form.instance.app_status = 'Verify Documents'
+
+        elif form.instance.app_status == 'Verify Documents':
+            form.instance.app_status = 'Verify Requirements'
+
+        elif form.instance.app_status == 'Verify Requirements':
             form.instance.app_status = 'Issue the Decision'
+
+        elif form.instance.app_status == 'Issue the Decision':
+            form.instance.app_status = 'Payment Fees'
+
+        elif form.instance.app_status == 'Request Manager Approval/Rejcet':
+            if form.instance.intial_approval == 'approve':
+                form.instance.app_status = 'Receive License Certificate'
+            else:
+                form.instance.app_status = 'Rejected'
+
+        return super().form_valid(form)
+
+    def test_func(self):
+        application = self.get_object()
+        if self.request.user == application.user_id:
+            return True
+        elif self.request.user.is_staff:
+            return True
+        else:
+            return False
+
+
+# Renewal License
+class ApplicationRenewalCreateView(LoginRequiredMixin, CreateView):
+    
+    model = Application
+    fields = [
+        'cr',
+        'full_en_name',
+        'flat_no',
+        'building_no',
+        'road_no',
+        'area',
+        'contact1',
+        'contact2',
+        'email',
+        'activty_type',
+        'financial_guarantee',
+        'financial_guarantee_expiry_date',
+        'cr_rent_doc',
+        'cr_ewa_bill_doc',
+        'cert1_doc',
+        'cert2_doc',
+        'cert3_doc',
+        'employment_office_receipt',
+        'fh_flat_no',
+        'fh_building_no',
+        'fh_road_no',
+        'fh_area',
+        'fh_contact1',
+        'fh_contact2',
+        'applicant_id',
+        ]
+
+    def form_valid(self, form):
+
+        form.instance.user_id = self.request.user
+        form.instance.app_no = 'Draft Application'
+        form.instance.app_date = datetime.datetime.now().date()
+        form.instance.app_status = 'Draft'
+        form.instance.app_type = 'Renewal License'
+
+        #system should pass the applicant number 
+        if form.instance.applicant_id:
+            # check if applicant has an application or has active license
+            if form.instance.applicant_id.has_application:
+                messages.warning(self.request, _('This applicant either received the license or has an application on going'))
+                return super(ApplicationRenewalCreateView, self).form_invalid(form)
+            else:
+                form.instance.applicant_id.has_application = True
+        else:
+            messages.warning(self.request, _('Please select a applicant..'))
+            return super(ApplicationRenewalCreateView, self).form_invalid(form)
+
+        return super(ApplicationRenewalCreateView, self).form_valid(form)
+
+class ApplicationRenewalUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Application
+    fields = [
+        'cr',
+        'full_en_name',
+        'flat_no',
+        'building_no',
+        'road_no',
+        'area',
+        'contact1',
+        'contact2',
+        'email',
+        'activty_type',
+        'financial_guarantee',
+        'financial_guarantee_expiry_date',
+        'cr_rent_doc',
+        'cr_ewa_bill_doc',
+        'cert1_doc',
+        'cert2_doc',
+        'cert3_doc',
+        'employment_office_receipt',
+        'fh_flat_no',
+        'fh_building_no',
+        'fh_road_no',
+        'fh_area',
+        'fh_contact1',
+        'fh_contact2',
+        'applicant_id',
+        ]
+
+    def form_valid(self, form):
+        if not form.instance.applicant_id.nationality == 'bahraini':
+            messages.warning(self.request, f'This application accept Bahrain nationality only')
+            return super(ApplicationRenewalUpdateView, self).form_invalid(form)
+
+        if form.instance.app_status == 'Draft':
+            # generate numbers
+            form.instance.app_no = "APP/" + str(datetime.datetime.now().year) + "/" + "{:02d}".format(datetime.datetime.now().month) + "/" + "{:04d}".format(form.instance.id)
+            form.instance.app_status = "Submitted"
+
+        elif form.instance.app_status == 'Submitted':
+            form.instance.app_status = 'Violations Verification'
+
+        elif form.instance.app_status == 'Violations Verification':
+            form.instance.app_status = 'Request Statements'
+
+        elif form.instance.app_status == 'Request Statements':
+            form.instance.app_status = 'Review Documents'
+
+        elif form.instance.app_status == 'Review Documents':
+            form.instance.app_status = 'Issue the Decision'
+
+        elif form.instance.app_status == 'Issue the Decision':
+            form.instance.app_status = 'Payment Fees'
+        
+        elif form.instance.app_status == 'Payment Fees':
+            form.instance.app_status = 'Request Manager Approval/Rejcet'
+
+        elif form.instance.app_status == 'Request Manager Approval/Rejcet':
+            if form.instance.intial_approval == 'approve':
+                form.instance.app_status = 'Receive License Certificate'
+            else:
+                form.instance.app_status = 'Rejected'
+
+        return super().form_valid(form)
+
+    def test_func(self):
+        application = self.get_object()
+        if self.request.user == application.user_id:
+            return True
+        elif self.request.user.is_staff:
+            return True
+        else:
+            return False
+
+
+# Revoke License
+class ApplicationRevokeCreateView(LoginRequiredMixin, CreateView):
+    
+    model = Application
+    fields = [
+        'cr',
+        'full_en_name',
+        'license_no',
+        'license_expiry_date',
+        'applicant_id',
+        ]
+
+    def form_valid(self, form):
+
+        form.instance.user_id = self.request.user
+        form.instance.app_no = 'Draft Application'
+        form.instance.app_date = datetime.datetime.now().date()
+        form.instance.app_status = 'Draft'
+        form.instance.app_type = 'Revoke License'
+
+        #system should pass the applicant number 
+        if form.instance.applicant_id:
+            # check if applicant has an application or has active license
+            if form.instance.applicant_id.has_application:
+                messages.warning(self.request, _('This applicant either received the license or has an application on going'))
+                return super(ApplicationRevokeCreateView, self).form_invalid(form)
+            else:
+                form.instance.applicant_id.has_application = True
+        else:
+            messages.warning(self.request, _('Please select a applicant..'))
+            return super(ApplicationRevokeCreateView, self).form_invalid(form)
+
+        return super(ApplicationRevokeCreateView, self).form_valid(form)
+
+class ApplicationRevokeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Application
+    fields = [
+        'cr',
+        'full_en_name',
+        'license_no',
+        'license_expiry_date',
+        'applicant_id',
+        ]
+
+    def form_valid(self, form):
+        if not form.instance.applicant_id.nationality == 'bahraini':
+            messages.warning(self.request, f'This application accept Bahrain nationality only')
+            return super(ApplicationRevokeUpdateView, self).form_invalid(form)
+
+        if form.instance.app_status == 'Draft':
+            # generate numbers
+            form.instance.app_no = "APP/" + str(datetime.datetime.now().year) + "/" + "{:02d}".format(datetime.datetime.now().month) + "/" + "{:04d}".format(form.instance.id)
+            form.instance.app_status = "Submitted"
+
+        elif form.instance.app_status == 'Submitted':
+            form.instance.app_status = 'Violations Verification'
+
+        elif form.instance.app_status == 'Violations Verification':
+            form.instance.app_status = 'Request Statements'
+
+        elif form.instance.app_status == 'Request Statements':
+            form.instance.app_status = 'Review Documents'
+        
+        elif form.instance.app_status == 'Review Documents':
+            form.instance.app_status = 'Issue the Decision'
+
+        elif form.instance.app_status == 'Issue the Decision':
+            form.instance.app_status = 'Payment Fees'
+        
+        elif form.instance.app_status == 'Payment Fees':
+            form.instance.app_status = 'Request Manager Approval/Rejcet'
+
+        elif form.instance.app_status == 'Request Manager Approval/Rejcet':
+            if form.instance.intial_approval == 'approve':
+                form.instance.app_status = 'Receive License Certificate'
+            else:
+                form.instance.app_status = 'Rejected'
+
+        return super().form_valid(form)
+
+    def test_func(self):
+        application = self.get_object()
+        if self.request.user == application.user_id:
+            return True
+        elif self.request.user.is_staff:
+            return True
+        else:
+            return False
+
 
 class ApplicationDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Application

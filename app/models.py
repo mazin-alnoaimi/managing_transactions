@@ -101,32 +101,6 @@ class Organization(models.Model):
 
 
 class Application(models.Model):
-
-    app_type_list = (
-        ('intial', 'Intial Approval'),
-        ('new', 'New'),
-        ('renewal', 'Renewal'),
-        ('modify', 'Modify'),
-        ('license_cancel', 'License Cancellation')
-    )
-
-    app_status_list = (
-        ('draft', 'Draft'),
-        ('submitted', 'Submitted'),
-        ('verification', 'Violations Verification'),
-        ('request_statement', 'Request Statements'),
-        ('review_statement', 'Reviewing Statements'),
-        ('initial_approval', 'Inital Approval'),
-        ('verify_documents', 'Verify Documents'),
-        ('issue_decision', 'Issue the Decision'),
-        ('paying_fees', 'Paying Fees'),                                # for new and modify license applications
-        ('paying_renewal_fees', 'Paying Renewal Fees'),                # for renewal license application
-        ('paying_cancellation_fees', 'Paying Cancellation Fees'),      # for cancellation license application
-        ('done', 'Receive License'),
-        ('cancellarion_done', 'Cancel License'),
-        ('app_cencel', 'Canceled by Applicant'),
-    )
-
     activity_type_list = (
         ('demostic', 'Demostic Labour Employment'),
         ('foreign', 'Foreign Labour Employement'),
@@ -142,9 +116,10 @@ class Application(models.Model):
         ('approve', 'Approve'),
         ('reject', 'Reject')
     )
+    
     app_no = models.CharField(_("Application No"), max_length=50)
     app_date = models.DateField(_("Application Date"), auto_now=False, auto_now_add=False)
-    app_type = models.CharField(_("Application Type"), max_length=50, choices=app_type_list)
+    app_type = models.CharField(_("Application Type"), max_length=50, default='Intial Approval')
     app_status = models.CharField(_("Status"), max_length=50, default='Draft')
     activty_type = models.CharField(_("Activity Type"), max_length=50, choices=activity_type_list)
     staff_comments = models.TextField(_("Comments"), blank=True)
@@ -170,18 +145,26 @@ class Application(models.Model):
     # start -- org details
     cr = models.CharField(_("CR No"), max_length=50, blank=True)
     cr_reg_date = models.DateField(_("Registration Date"), null=True, blank=True)
-    full_en_name = models.CharField(_("Commercial Eng Name"), max_length=250, default='')
-    full_ar_name = models.CharField(_("Commercial Arb Name"), max_length=250, default='')
-    license_no = models.CharField(_("License No"), max_length=50, default='')
+    full_en_name = models.CharField(_("Commercial Eng Name"), max_length=250)
+    license_no = models.CharField(_("License No"), max_length=50, blank=True)
     license_expiry_date = models.DateField(_("License Expiry Date"), null=True, blank=True)
-    flat_no = models.IntegerField(_("Flat No"), default=0)
-    building_no = models.IntegerField(_("Building No"), default=0)
-    road_no = models.IntegerField(_("Road No"), default=0)
-    area = models.CharField(_("Area"), max_length=50, default='')
-    contact1 = models.CharField(_("Phone"), max_length=50, default='')
-    contact2 = models.CharField(_("Fax"), max_length=50, default='')
-    email = models.EmailField(_("Email"), max_length=254, default='')
+    flat_no = models.IntegerField(_("Flat No"), blank=True)
+    building_no = models.IntegerField(_("Building No"), blank=True)
+    road_no = models.IntegerField(_("Road No"), blank=True)
+    area = models.CharField(_("Area"), max_length=50, blank=True)
+    contact1 = models.CharField(_("Phone"), max_length=50, blank=True)
+    contact2 = models.CharField(_("Fax"), max_length=50, blank=True)
+    email = models.EmailField(_("Email"), max_length=254, blank=True)
     # end -- org details
+
+    # start -- female accomodation
+    fh_flat_no = models.IntegerField(_("Flat No"), blank=True)
+    fh_building_no = models.IntegerField(_("Building No"), blank=True)
+    fh_road_no = models.IntegerField(_("Road No"), blank=True)
+    fh_area = models.CharField(_("Area"), max_length=50, blank=True)
+    fh_contact1 = models.CharField(_("Phone"), max_length=50, blank=True)
+    fh_contact2 = models.CharField(_("Fax"), max_length=50, blank=True)
+
 
     # org_id = models.ForeignKey(Organization, verbose_name=_("Organization Name"), on_delete=models.CASCADE, blank=True)
 
