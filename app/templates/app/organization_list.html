@@ -1,0 +1,49 @@
+{% extends "app/base.html" %}
+
+
+{% block content %}
+<h1 class="display-4">Organization List</h1>
+<p class="lead font-italic">Any Text can be placed here</p>
+<table class="table table-borderless">
+    <thead class="border-bottom font-weight-bold">
+        <tr>
+            <td>Full Name</td>
+            <td>Phone</td>
+            <td>CR</td>
+            <td>CR Reg Date</td>
+            <td>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'organization_insert' %}" class="btn btn-outline-success">
+                        <i class="fas fa-plus"></i> Add New
+                    </a>
+                {% endif %}
+
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for organization in organization_list %}
+            <tr>
+                <td>{{organization.full_en_name}}</td>
+                <td>{{organization.contact1}}</td>
+                <td>{{organization.cr}}</td>
+                <td>{{organization.cr_reg_date}}</td>
+                <td>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'organization_update' organization.id %}" class="btn text-secondary px-0">
+                        <i class="far fa-edit fa-lg"></i>
+                    </a>
+                    <form action="{% url 'organization_delete' organization.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn">
+                            <i class="far fa-trash-alt fa-lg text-danger float-right"></i>
+                        </button>
+                    </form>
+                {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}

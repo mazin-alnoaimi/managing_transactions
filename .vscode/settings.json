@@ -1,2 +1,13 @@
 {
+    "django.snippets.exclude": [
+
+        "cms",
+        "wagtail"
+    ],
+    
+    "python.linting.pylintArgs": ["--load-plugins", "pylint_django"],
+
+    "[python]": {
+
+    }
 }

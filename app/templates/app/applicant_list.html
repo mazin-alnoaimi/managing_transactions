@@ -1,0 +1,49 @@
+{% extends "app/base.html" %}
+
+
+{% block content %}
+<h1 class="display-4">Applicant List</h1>
+<p class="lead font-italic">Any Text can be placed here</p>
+<table class="table table-borderless">
+    <thead class="border-bottom font-weight-bold">
+        <tr>
+            <td>Full Name</td>
+            <td>Mobile</td>
+            <td>CPR</td>
+            <td>CPR Expiry Date</td>
+            <td>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'applicant_insert' %}" class="btn btn-outline-success">
+                        <i class="fas fa-plus"></i> Add New
+                    </a>
+                {% endif %}
+
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for applicant in applicant_list %}
+            <tr>
+                <td>{{applicant.fullname}}</td>
+                <td>{{applicant.contact2}}</td>
+                <td>{{applicant.cpr}}</td>
+                <td>{{applicant.cpr_expiry_date}}</td>
+                <td>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'applicant_update' applicant.id %}" class="btn text-secondary px-0">
+                        <i class="far fa-edit fa-lg"></i>
+                    </a>
+                    <form action="{% url 'applicant_delete' applicant.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn">
+                            <i class="far fa-trash-alt fa-lg text-danger float-right"></i>
+                        </button>
+                    </form>
+                {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}

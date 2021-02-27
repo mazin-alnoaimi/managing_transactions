@@ -9,223 +9,147 @@ from django.views.generic import (
     DetailView,
     CreateView,
     UpdateView,
-    DeleteView
+    DeleteView,
+    FormView,
+    TemplateView
 )
 
-from .models import Applicant
-from .models import Organization
-from .models import Application
+from django.urls import reverse_lazy
+
+from .forms import (ApplicantForm, OrganizationForm, ApplicationForm)
+
+from .models import (Applicant, Organization, Application)
+
 
 def home(request):
     return render(request, 'app/home.html') #, context)
 
-
 def about(request):
     return render(request, 'app/about.html', {'title': 'About'})
 
+def applicant_list(request):
+    context = {'applicant_list': Applicant.objects.all()}
+    return render(request, "app/applicant_list.html", context)
 
-def applicant(request):
-    context = {
-        'applicants': Applicant.objects.all()
-    }
-    return render(request, 'app/applicant.html', context)
+def applicant_form(request, id=0):
+    print("====================================================================== 0")
+    if request.method == "GET":
+        print("====================================================================== 1")
+        if id == 0:
+            print("====================================================================== 2")
+            form = ApplicantForm()
+        else:
+            print("====================================================================== 4")
+            applicant = Applicant.objects.get(pk=id)
+            form = ApplicantForm(instance=applicant)
+        print("====================================================================== 5")
+        return render(request, "app/applicant_form.html", {'form': form})
+    else:
+        print("====================================================================== 6")
+        if id == 0:
+            print("====================================================================== 7")
+            form = ApplicantForm(request.POST)
+        else:
+            print("====================================================================== 8")
+            applicant = Applicant.objects.get(pk=id)
+            form = ApplicantForm(request.POST,instance= applicant)
 
-def organization(request, applicant=None):
-    context = {
-        'organizations': Organization.objects.all()
-    }
-    return render(request, 'app/organization.html', context)
+        if form.is_valid():
+            print("====================================================================== 9")
+            form.save()
+        else:
+            print("====================================================================== 10")
+            return render(request, "app/applicant_form.html", {'form': form})
+        return redirect('/applicant/list')
 
-def application(request):
-    context = {
-        'applications': Application.objects.all()
-    }
-    return render(request, 'app/application.html', context)
-
-class ApplicantListView(LoginRequiredMixin, ListView):
-    model = Applicant
-    template_name = 'app/applicant.html' 
-    context_object_name = 'applicants'
-
-    def get_queryset(self):
-        return super(ApplicantListView, self).get_queryset().filter(user_id=self.request.user)
-
-class ApplicantDetailView(DetailView):
-    model = Applicant
-
-class ApplicantCreateView(LoginRequiredMixin, CreateView):
-    model = Applicant
-    fields = [
-        'cpr', 
-        'cpr_expiry_date', 
-        'fullname', 
-        'gender', 
-        'nationality',
-        'qualification', 
-        'occupcation', 
-        'flat_no', 
-        'building_no', 
-        'road_no', 
-        'area', 
-        'contact1', 
-        'contact2', 
-        'email', 
-        'user_id', 
-        'passport_expiry_date'
-        # 'cpr_doc', 
-        # 'passport_doc', 
-        # 'behavior_cert_doc', 
-        # 'bank_statement_doc'
-        ]
-
-    def form_valid(self, form):
-        
-        if form.instance.cpr_expiry_date <= datetime.datetime.now().date():
-            messages.warning(self.request, f'Please renew your CPR')
-            return super(ApplicantCreateView, self).form_invalid(form)
-        
-        if form.instance.passport_expiry_date <= datetime.datetime.now().date():
-            messages.warning(self.request, f'Please renew your Passport')
-            return super(ApplicantCreateView, self).form_invalid(form)
-
-        form.instance.user_id = self.request.user
-        return super(ApplicantCreateView, self).form_valid(form)
-
-class ApplicantUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Applicant
-    fields = [
-        'cpr', 
-        'cpr_expiry_date', 
-        'fullname', 
-        'gender', 
-        'nationality',
-        'qualification', 
-        'occupcation', 
-        'flat_no', 
-        'building_no', 
-        'road_no', 
-        'area', 
-        'contact1', 
-        'contact2', 
-        'email',
-        'passport_expiry_date']
-
-    def form_valid(self, form):
-        
-        if form.instance.cpr_expiry_date <= datetime.datetime.now().date():
-            messages.warning(self.request, f'Please renew your CPR')
-            return super(ApplicantUpdateView, self).form_invalid(form)
-        
-        if form.instance.passport_expiry_date <= datetime.datetime.now().date():
-            messages.warning(self.request, f'Please renew your Passport')
-            return super(ApplicantUpdateView, self).form_invalid(form)
-
-        form.instance.user_id = self.request.user
-        return super().form_valid(form)
-
-    def test_func(self):
-        applicant = self.get_object()
-        if self.request.user == applicant.user_id:
-            return True
-        return False
-
-class ApplicantDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Applicant
-    success_url = '/applicant'
-
-    def test_func(self):
-        applicant = self.get_object()
-        if self.request.user == applicant.user_id:
-            return True
-        return False
+def applicant_delete(request,id):
+    applicant = Applicant.objects.get(pk=id)
+    applicant.delete()
+    return redirect('/applicant/list')
 
 
-class OrganizationListView(LoginRequiredMixin, ListView):
-    model = Organization
-    template_name = 'app/organization.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'organizations'
-    # ordering = ['-date_posted']
+def organization_list(request):
+    context = {'organization_list': Organization.objects.all()}
+    return render(request, "app/organization_list.html", context)
 
-    def get_queryset(self):
-        return super(OrganizationListView, self).get_queryset().filter(user_id=self.request.user)
+def organization_form(request, id=0):
+    print("====================================================================== 0")
+    if request.method == "GET":
+        print("====================================================================== 1")
+        if id == 0:
+            print("====================================================================== 2")
+            form = OrganizationForm()
+        else:
+            print("====================================================================== 4")
+            organization = Organization.objects.get(pk=id)
+            form = OrganizationForm(instance=organization)
+        print("====================================================================== 5")
+        return render(request, "app/organization_form.html", {'form': form})
+    else:
+        print("====================================================================== 6")
+        if id == 0:
+            print("====================================================================== 7")
+            form = OrganizationForm(request.POST)
+        else:
+            print("====================================================================== 8")
+            organization = Organization.objects.get(pk=id)
+            form = OrganizationForm(request.POST,instance= organization)
 
-class OrganizationDetailView(DetailView):
-    model = Organization
+        if form.is_valid():
+            print("====================================================================== 9")
+            form.save()
+        else:
+            print("====================================================================== 10")
+            return render(request, "app/organization_form.html", {'form': form})
+        return redirect('/organization/list')
 
-class OrganizationCreateView(LoginRequiredMixin, CreateView):
-    model = Organization
-    fields = [
-        'cr',
-        'cr_reg_date',
-        'full_en_name',
-        'full_ar_name',
-        'license_no',
-        'flat_no',
-        'building_no',
-        'road_no',
-        'area',
-        'contact1',
-        'contact2',
-        'email',
-        'applicant_id',
-        'user_id',
-        # 'cr_doc',
-        # 'bank_statement_doc',
-        # 'lmra_agreement'
-        ]
-    #widgets = {
-    #        'cr_reg_date': DateTimeInput(attrs={'type': 'datetime-local'}),
-    #    }
+def organization_delete(request,id):
+    organization = Organization.objects.get(pk=id)
+    organization.delete()
+    return redirect('/organization/list')
 
-    def form_valid(self, form):
-        form.instance.user_id = self.request.user
-        return super().form_valid(form)
 
-class OrganizationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Organization
-    fields = [
-        'cr',
-        'cr_reg_date',
-        'full_en_name',
-        'full_ar_name',
-        'license_no',
-        'flat_no',
-        'building_no',
-        'road_no',
-        'area',
-        'contact1',
-        'contact2',
-        'email',
-        'applicant_id',
-        'user_id',
-        # 'cr_doc',
-        # 'bank_statement_doc',
-        # 'lmra_agreement'
-        ]
+def application_list(request):
+    context = {'application_list': Application.objects.all()}
+    return render(request, "app/application_list.html", context)
 
-    def form_valid(self, form):
-        if form.instance.applicant_id:
-            if form.instance.applicant.user_id == self.request.user:
-                form.instance.user_id = self.request.user
-            else:
-                messages.warning(self.request, f'You are not allowed to update this record')
-        return super().form_valid(form)
+def application_form(request, id=0):
+    print("====================================================================== 0")
+    if request.method == "GET":
+        print("====================================================================== 1")
+        if id == 0:
+            print("====================================================================== 2")
+            form = ApplicationForm()
+        else:
+            print("====================================================================== 4")
+            application = Application.objects.get(pk=id)
+            form = ApplicationForm(instance=application)
+        print("====================================================================== 5")
+        return render(request, "app/application_form.html", {'form': form})
+    else:
+        print("====================================================================== 6")
+        if id == 0:
+            print("====================================================================== 7")
+            form = ApplicationForm(request.POST)
+        else:
+            print("====================================================================== 8")
+            application = Application.objects.get(pk=id)
+            form = ApplicationForm(request.POST,instance= application)
 
-    def test_func(self):
-        organization = self.get_object()
-        if self.request.user == organization.applicant_id.user_id:
-            return True
-        return False
+        if form.is_valid():
+            print("====================================================================== 9")
+            form.user_id = request.user
+            form.save()
+        else:
+            print("====================================================================== 10")
+            return render(request, "app/application_form.html", {'form': form})
+        return redirect('/application/list')
 
-class OrganizationDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Organization
-    success_url = '/organization'
+def application_delete(request,id):
+    application = Application.objects.get(pk=id)
+    application.delete()
+    return redirect('/application/list')
 
-    def test_func(self):
-        organization = self.get_object()
-        if self.request.user == organization.applicant_id.user_id:
-            return True
-        return False
 
 
 
@@ -245,7 +169,7 @@ class ApplicationDetailView(DetailView):
     model = Application
 
 class ApplicationCreateView(LoginRequiredMixin, CreateView):
-    
+
     model = Application
     fields = [
         'org_id',
@@ -269,7 +193,7 @@ class ApplicationCreateView(LoginRequiredMixin, CreateView):
         # 'bank_announcement_doc',
         # 'emp_id',
         # 'emp_approval_date',
-        
+
         ]
 
     def form_valid(self, form):
@@ -334,7 +258,7 @@ class ApplicationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
         if not form.instance.applicant_id.nationality == 'bahraini':
             messages.warning(self.request, f'This application accept Bahrain nationality only')
             return super(ApplicantUpdateView, self).form_invalid(form)
-        
+
         # this condition to set the applicant ability to apply fot another application in future
         if 'cancel-btn' in self.data:
             form.instance.app_status = 'Cancelled by applicant'
@@ -356,7 +280,7 @@ class ApplicationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
 
         elif form.instance.app_status == 'Inital Approval':
             form.insp_status = 'Verify Documents'
-        
+
         elif form.instance.app_status == 'Issue the Decision':
             if form.instance.app_type == 'new' or form.instance.app_type == 'modify':
                 form.instance.app_status = 'Paying New/Modify Fees'
@@ -387,7 +311,7 @@ class ApplicationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
 
 # Intial Approval
 class ApplicationIntialApprovalCreateView(LoginRequiredMixin, CreateView):
-    
+
     model = Application
     fields = [
         'cr',
@@ -403,7 +327,7 @@ class ApplicationIntialApprovalCreateView(LoginRequiredMixin, CreateView):
         form.instance.app_status = 'Draft'
         form.instance.app_type = 'Intial Approval'
 
-        #system should pass the applicant number 
+        #system should pass the applicant number
         if form.instance.applicant_id:
             # check if applicant has an application or has active license
             if form.instance.applicant_id.has_application:
@@ -432,7 +356,7 @@ class ApplicationIntialApprovalUpdateView(LoginRequiredMixin, UserPassesTestMixi
         if not form.instance.applicant_id.nationality == 'bahraini':
             messages.warning(self.request, f'This application accept Bahrain nationality only')
             return super(ApplicationIntialApprovalUpdateView, self).form_invalid(form)
-        
+
         # this condition to set the applicant ability to apply fot another application in future
         # if 'cancel-btn' in self.data:
         #     form.instance.app_status = 'Cancelled by applicant'
@@ -475,7 +399,7 @@ class ApplicationIntialApprovalUpdateView(LoginRequiredMixin, UserPassesTestMixi
 
 # Final Approval
 class ApplicationFinalApprovalCreateView(LoginRequiredMixin, CreateView):
-    
+
     model = Application
     fields = [
         'cr',
@@ -513,7 +437,7 @@ class ApplicationFinalApprovalCreateView(LoginRequiredMixin, CreateView):
         form.instance.app_status = 'Draft'
         form.instance.app_type = 'Final Approval'
 
-        #system should pass the applicant number 
+        #system should pass the applicant number
         if form.instance.applicant_id:
             # check if applicant has an application or has active license
             if form.instance.applicant_id.has_application:
@@ -599,7 +523,7 @@ class ApplicationFinalApprovalUpdateView(LoginRequiredMixin, UserPassesTestMixin
 
 # Renewal License
 class ApplicationRenewalCreateView(LoginRequiredMixin, CreateView):
-    
+
     model = Application
     fields = [
         'cr',
@@ -637,7 +561,7 @@ class ApplicationRenewalCreateView(LoginRequiredMixin, CreateView):
         form.instance.app_status = 'Draft'
         form.instance.app_type = 'Renewal License'
 
-        #system should pass the applicant number 
+        #system should pass the applicant number
         if form.instance.applicant_id:
             # check if applicant has an application or has active license
             if form.instance.applicant_id.has_application:
@@ -705,7 +629,7 @@ class ApplicationRenewalUpdateView(LoginRequiredMixin, UserPassesTestMixin, Upda
 
         elif form.instance.app_status == 'Issue the Decision':
             form.instance.app_status = 'Payment Fees'
-        
+
         elif form.instance.app_status == 'Payment Fees':
             form.instance.app_status = 'Request Manager Approval/Rejcet'
 
@@ -729,7 +653,7 @@ class ApplicationRenewalUpdateView(LoginRequiredMixin, UserPassesTestMixin, Upda
 
 # Revoke License
 class ApplicationRevokeCreateView(LoginRequiredMixin, CreateView):
-    
+
     model = Application
     fields = [
         'cr',
@@ -747,7 +671,7 @@ class ApplicationRevokeCreateView(LoginRequiredMixin, CreateView):
         form.instance.app_status = 'Draft'
         form.instance.app_type = 'Revoke License'
 
-        #system should pass the applicant number 
+        #system should pass the applicant number
         if form.instance.applicant_id:
             # check if applicant has an application or has active license
             if form.instance.applicant_id.has_application:
@@ -789,13 +713,13 @@ class ApplicationRevokeUpdateView(LoginRequiredMixin, UserPassesTestMixin, Updat
 
         elif form.instance.app_status == 'Request Statements':
             form.instance.app_status = 'Review Documents'
-        
+
         elif form.instance.app_status == 'Review Documents':
             form.instance.app_status = 'Issue the Decision'
 
         elif form.instance.app_status == 'Issue the Decision':
             form.instance.app_status = 'Payment Fees'
-        
+
         elif form.instance.app_status == 'Payment Fees':
             form.instance.app_status = 'Request Manager Approval/Rejcet'
 

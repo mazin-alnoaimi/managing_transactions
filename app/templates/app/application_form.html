@@ -1,13 +1,175 @@
 {% extends "app/base.html" %}
 {% load crispy_forms_tags %}
+
+
 {% block content %}
-    <div class="content-section">
-        <form method="POST">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Application</legend>
-                {{ form|crispy }}
-            </fieldset>
+<h1 class="display-4">Application Form</h1>
+<p class="lead font-italic">Any Text can be placed here</p>
+<form action="" method="post" autocomplete="off">
+    {% csrf_token %}
+    <div class="row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form.app_no|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.app_date|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.app_type|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.app_status|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.activty_type|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+        </div>
+
+        {% if form.instance.app_type != 'Initial Approval' %}
+        <div class="form-group col-md-12">
+        <h3>Company Details</h3>
+        </div>
+        {% endif %}
+        <div class="form-group col-md-6 mb-0">
+            {{ form.cr|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.cr_reg_date|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.full_en_name|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.license_no|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.license_expiry_date|as_crispy_field }}
+        </div>
+
+        {% if form.instance.app_type != 'Initial Approval' %}
+        <div class="form-group col-md-12">
+        <h3>Address Details</h3>
+        </div>
+        {% endif %}
+        <div class="form-group col-md-6 mb-0">
+            {{ form.flat_no|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.building_no|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.road_no|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.area|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.contact1|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.contact2|as_crispy_field }}
+        </div>
+
+        {% if form.instance.app_type != 'Initial Approval' %}
+        <div class="form-group col-md-12">
+        <h3>Female Accommodation Address Details</h3>
+        </div>
+        {% endif %}
+        <div class="form-group col-md-6 mb-0">
+            {{ form.fh_flat_no|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.fh_building_no|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.fh_road_no|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.fh_area|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.fh_contact1|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.fh_contact2|as_crispy_field }}
+        </div>
+
+        <div class="form-group col-md-6 mb-0">
+            {{ form.intial_approval|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.email|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.financial_guarantee|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.financial_guarantee_expiry_date|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+        </div>
+        {% if user.is_authenticated %}
+        {% if user.is_staff %}
+        <div class="form-group col-md-12 mb-0">
+            {{ form.staff_comments|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-12 mb-0">
+            {{ form.manager_comments|as_crispy_field }}
+        </div>
+        {% endif %}
+        {% endif %}
+        <div class="form-group col-md-6 mb-0">
+            {{ form.applicant_id|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.user_id|as_crispy_field }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    {% if form.instance.app_type == 'Initial Approval' %}
+                        {% if form.instance.app_status == 'Draft' %}
+                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i>
+                            Generate Application Code</button>
+
+                        {% elif form.instance.app_status == 'Submitted' %}
+                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i>
+                            Violations Verification</button>
+                        {% elif form.instance.app_status == 'Violations Verification' %}
+                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i>
+                            Request Statements</button>
+                        {% elif form.instance.app_status == 'Request Statements' %}
+                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i>
+                            Review Documents</button>
+                        {% elif form.instance.app_status == 'Review Documents' %}
+                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i>
+                            Request Manager Approval/Reject</button>
+                        {% elif form.instance.app_status == 'Request Manager Approval/Rejcet' %}
+                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i>
+                            Intial Approval Completed</button>
+                        {% elif form.instance.app_status == 'Intial Approval' %}
+
+                            <p>Application has been closed, please check the status</p>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    {% if form.instance.app_status == 'Draft' %}
+                    <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i>
+                    Submit</button>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'application_list' %}" class="btn btn-secondary btn-block btn-lg">
+                <i class="fas fa-stream"></i> Back to list
+            </a>
+        </div>
+    </div>
             <div class="form-group">
             {% if user.is_authenticated %}
                 {% if user.is_staff %}
@@ -25,7 +187,7 @@
                         {% elif application.app_status == 'Request Manager Approval/Rejcet' %}
                             <button class="btn btn-outline-info" type="submit">Intial Approval Completed</button>
                         {% elif application.app_status == 'Intial Approval' %}
-                        
+
                             <p>Application has been closed, please check the status</p>
                         {% endif %}
                     {% elif application.app_type == 'final' %}
@@ -44,7 +206,7 @@
                         {% elif application.app_status == 'Request Manager Approval/Rejcet' %}
                             <button class="btn btn-outline-info" type="submit">Final Approval Completed</button>
                         {% elif application.app_status == 'Intial Approval' %}
-                        
+
                             <p>Application has been closed, please check the status</p>
                         {% endif %}
                     {% else %}
@@ -72,7 +234,7 @@
                     {% endif %}
                 {% else %}
                     <button class="btn btn-outline-info" type="submit" name="save-btn">Save</button>
-                    
+
                     <button class="btn btn-outline-info" type="submit" name="cancel-btn">Cancel</button>
                 {% endif %}
             {% endif %}
