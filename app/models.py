@@ -51,8 +51,6 @@ class Applicant(models.Model):
     cpr_doc = models.FileField(_("CPR Doc"), upload_to='doc_library', max_length=100)
     passport_doc = models.FileField(_("Passport Doc"), upload_to='doc_library', max_length=100)
     behavior_cert_doc = models.FileField(_("Behavior Certificate Doc"), upload_to='doc_library', max_length=100)
-
-    # Applicant Bank Related Fields
     bank_statement_doc = models.FileField(_("Bank Statement Doc"), upload_to='doc_library', max_length=100)
     is_10000_exist = models.BooleanField(_("Is 10000 BD exist in Applicant Bank Statement"), default=False)
 
@@ -139,21 +137,31 @@ class Application(models.Model):
     fh_contact1 = models.CharField(_("Phone"), max_length=50, blank=True)
     fh_contact2 = models.CharField(_("Fax"), max_length=50, blank=True)
 
-    # start -- files section
-    # cert1_doc = models.FileField(_("MOIS Cert"), upload_to='doc_library', max_length=100, default='')
-    # cert2_doc = models.FileField(_("MOH Cert"), upload_to='doc_library', max_length=100, default='')
-    # cert3_doc = models.FileField(_("MOL Cert"), upload_to='doc_library', max_length=100, default='')
+    qsreq = models.IntegerField(_("Uploaded Documents"), default=0)
+    qnreq = models.IntegerField(_("Org Required Documents"), default=1)
+    dreq = models.FloatField(_("Adequacy of Requirements Level"), default=0)
 
-    # cr_rent_doc = models.FileField(_("CR Rental Agreement Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
-    # fh_rent_doc = models.FileField(_("Temp FH Rental Agreement Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    qsrec = models.IntegerField(_("Satisfying Recommendations"), default=0)
+    qnrec = models.IntegerField(_("All Recommendations"), default=1)
+    drec = models.FloatField(_("Adequacy of Recommendations Level"), default=0)
 
-    # cr_ewa_bill_doc = models.FileField(_("CR EWA Bill Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
-    # fh_ewa_bill_doc = models.FileField(_("Temp FH EWA Bill Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    #Attachments
+    cr_doc = models.FileField(_("CR Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    bank_statement_doc = models.FileField(_("Bank Statement Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    lmra_agreement = models.FileField(_("LMRA Agreement"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    cert1_doc = models.FileField(_("MOIS Cert"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    cert2_doc = models.FileField(_("MOH Cert"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    cert3_doc = models.FileField(_("MOL Cert"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    cr_rent_doc = models.FileField(_("CR Rental Agreement Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    fh_rent_doc = models.FileField(_("Temp FH Rental Agreement Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    cr_ewa_bill_doc = models.FileField(_("CR EWA Bill Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    fh_ewa_bill_doc = models.FileField(_("Temp FH EWA Bill Doc"), upload_to='doc_library', max_length=100, null=True, blank=True)
+    employment_office_receipt = models.FileField(_("Employment Office Receipt"), upload_to='doc_library', max_length=100, null=True, blank=True)
 
-    # employment_office_receipt = models.FileField(_("Employment Office Receipt"), upload_to='doc_library', max_length=100, null=True, blank=True)
-    # end -- files section
+
     applicant_id = models.ForeignKey(Applicant, verbose_name=_(""), on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, verbose_name=_(""), on_delete=models.CASCADE)
+
 
     def __str__(self):
         return self.app_no
