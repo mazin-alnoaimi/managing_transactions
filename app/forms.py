@@ -30,24 +30,6 @@ nationality_list = (
 
 class ApplicantForm(forms.ModelForm):
 
-    cpr = forms.CharField(label='CPR')
-    # cpr_expiry_date = forms.DateField()
-    # fullname = forms.CharField()
-    # gender = forms.ChoiceField(choices=gender_list, required=True)
-    # qualification = forms.ChoiceField(choices=qualification_list)
-    # nationality = forms.ChoiceField(choices=nationality_list)
-    # occupcation = forms.CharField()
-    # passport_expiry_date = forms.DateField()
-    # has_application = forms.BooleanField()
-
-    # Address fields
-    # flat_no = forms.IntegerField()
-    # building_no = forms.IntegerField()
-    # road_no = forms.IntegerField()
-    # area = forms.CharField()
-    # contact1 = forms.CharField(label='Phone')
-    # contact2 = forms.CharField(label='Mobile')
-    # email = forms.EmailField()
     user_id = forms.ModelChoiceField(User.objects.all())
 
     class Meta:
@@ -171,6 +153,8 @@ class ApplicationForm(forms.ModelForm):
             self.fields['fh_area'].widget = forms.HiddenInput()
             self.fields['fh_contact1'].widget = forms.HiddenInput()
             self.fields['fh_contact2'].widget = forms.HiddenInput()
+
+            #open for update an exist record(instance)
             if self.instance.id:
                 if self.instance.app_status == 'Submitted':
                     self.fields['manager_comments'].widget = forms.HiddenInput()
@@ -183,6 +167,7 @@ class ApplicationForm(forms.ModelForm):
                     self.fields['intial_approval'].widget = forms.HiddenInput()
                     self.fields['financial_guarantee'].widget = forms.HiddenInput()
                     self.fields['financial_guarantee_expiry_date'].widget = forms.HiddenInput()
+            #open new form for entering new date -- no instance exist
             elif self.fields['app_status'].initial == 'Draft':
                 self.fields['staff_comments'].widget = forms.HiddenInput()
                 self.fields['manager_comments'].widget = forms.HiddenInput()
@@ -253,6 +238,7 @@ class ApplicationForm(forms.ModelForm):
                         self.instance.app_status = 'Final Approval'
                     else:
                         self.instance.app_status = 'Rejected'
+
         elif self.fields['app_type'].initial == 'Renewal License':
             # self.user_id = self.request.user
 
@@ -300,9 +286,6 @@ class ApplicationForm(forms.ModelForm):
                     self.instance.app_status = 'Issue the Decision'
 
                 elif self.instance.app_status == 'Issue the Decision':
-                    self.instance.app_status = 'Payment Fees'
-
-                elif self.instance.app_status == 'Payment Fees':
                     self.instance.app_status = 'Request Manager Approval/Reject'
 
                 elif self.instance.app_status == 'Request Manager Approval/Reject':
