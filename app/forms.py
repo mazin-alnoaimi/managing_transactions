@@ -154,48 +154,36 @@ class ApplicationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ApplicationForm, self).__init__(*args, **kwargs)
         if self.fields['app_type'].initial == 'Initial Approval':
+            self.fields['cr'].widget = forms.HiddenInput()
+            self.fields['cr_reg_date'].widget = forms.HiddenInput()
+            self.fields['full_en_name'].widget = forms.HiddenInput()
+            self.fields['license_no'].widget = forms.HiddenInput()
+            self.fields['license_expiry_date'].widget = forms.HiddenInput()
+            self.fields['flat_no'].widget = forms.HiddenInput()
+            self.fields['building_no'].widget = forms.HiddenInput()
+            self.fields['road_no'].widget = forms.HiddenInput()
+            self.fields['area'].widget = forms.HiddenInput()
+            self.fields['contact1'].widget = forms.HiddenInput()
+            self.fields['contact2'].widget = forms.HiddenInput()
+            self.fields['fh_flat_no'].widget = forms.HiddenInput()
+            self.fields['fh_building_no'].widget = forms.HiddenInput()
+            self.fields['fh_road_no'].widget = forms.HiddenInput()
+            self.fields['fh_area'].widget = forms.HiddenInput()
+            self.fields['fh_contact1'].widget = forms.HiddenInput()
+            self.fields['fh_contact2'].widget = forms.HiddenInput()
             if self.instance.id:
                 if self.instance.app_status == 'Submitted':
-                    self.fields['cr'].widget = forms.HiddenInput()
-                    self.fields['cr_reg_date'].widget = forms.HiddenInput()
-                    self.fields['full_en_name'].widget = forms.HiddenInput()
-                    self.fields['license_no'].widget = forms.HiddenInput()
-                    self.fields['license_expiry_date'].widget = forms.HiddenInput()
-                    self.fields['flat_no'].widget = forms.HiddenInput()
-                    self.fields['building_no'].widget = forms.HiddenInput()
-                    self.fields['road_no'].widget = forms.HiddenInput()
-                    self.fields['area'].widget = forms.HiddenInput()
-                    self.fields['contact1'].widget = forms.HiddenInput()
-                    self.fields['contact2'].widget = forms.HiddenInput()
-                    self.fields['fh_flat_no'].widget = forms.HiddenInput()
-                    self.fields['fh_building_no'].widget = forms.HiddenInput()
-                    self.fields['fh_road_no'].widget = forms.HiddenInput()
-                    self.fields['fh_area'].widget = forms.HiddenInput()
-                    self.fields['fh_contact1'].widget = forms.HiddenInput()
-                    self.fields['fh_contact2'].widget = forms.HiddenInput()
                     self.fields['manager_comments'].widget = forms.HiddenInput()
                     self.fields['intial_approval'].widget = forms.HiddenInput()
                     self.fields['financial_guarantee'].widget = forms.HiddenInput()
                     self.fields['financial_guarantee_expiry_date'].widget = forms.HiddenInput()
-
+                elif self.fields['app_status'].initial == 'Draft':
+                    self.fields['staff_comments'].widget = forms.HiddenInput()
+                    self.fields['manager_comments'].widget = forms.HiddenInput()
+                    self.fields['intial_approval'].widget = forms.HiddenInput()
+                    self.fields['financial_guarantee'].widget = forms.HiddenInput()
+                    self.fields['financial_guarantee_expiry_date'].widget = forms.HiddenInput()
             elif self.fields['app_status'].initial == 'Draft':
-                self.fields['cr'].widget = forms.HiddenInput()
-                self.fields['cr_reg_date'].widget = forms.HiddenInput()
-                self.fields['full_en_name'].widget = forms.HiddenInput()
-                self.fields['license_no'].widget = forms.HiddenInput()
-                self.fields['license_expiry_date'].widget = forms.HiddenInput()
-                self.fields['flat_no'].widget = forms.HiddenInput()
-                self.fields['building_no'].widget = forms.HiddenInput()
-                self.fields['road_no'].widget = forms.HiddenInput()
-                self.fields['area'].widget = forms.HiddenInput()
-                self.fields['contact1'].widget = forms.HiddenInput()
-                self.fields['contact2'].widget = forms.HiddenInput()
-                self.fields['fh_flat_no'].widget = forms.HiddenInput()
-                self.fields['fh_building_no'].widget = forms.HiddenInput()
-                self.fields['fh_road_no'].widget = forms.HiddenInput()
-                self.fields['fh_area'].widget = forms.HiddenInput()
-                self.fields['fh_contact1'].widget = forms.HiddenInput()
-                self.fields['fh_contact2'].widget = forms.HiddenInput()
                 self.fields['staff_comments'].widget = forms.HiddenInput()
                 self.fields['manager_comments'].widget = forms.HiddenInput()
                 self.fields['intial_approval'].widget = forms.HiddenInput()
@@ -219,8 +207,108 @@ class ApplicationForm(forms.ModelForm):
                     self.instance.app_status = "Submitted"
                     self.instance.app_no = "APP/" + str(datetime.datetime.now().year) + "/" + "{:02d}".format(datetime.datetime.now().month) + "/" + "{:04d}".format(self.instance.id)
 
+                elif self.instance.app_status == 'Submitted':
+                    self.instance.app_status = 'Violations Verification'
 
+                elif self.instance.app_status == 'Violations Verification':
+                    self.instance.app_status = 'Request Statements'
 
+                elif self.instance.app_status == 'Request Statements':
+                    self.instance.app_status = 'Review Documents'
 
+                elif self.instance.app_status == 'Review Documents':
+                    self.instance.app_status = 'Request Manager Approval/Reject'
+
+                elif self.instance.app_status == 'Request Manager Approval/Reject':
+                    if self.instance.intial_approval == 'approve':
+                        self.instance.app_status = 'Initial Approval'
+                    else:
+                        self.instance.app_status = 'Rejected'
+
+        elif self.fields['app_type'].initial == 'Final Approval':
+            # self.user_id = self.request.user
+
+            if self.instance.id:  # if true then this is update form
+                if self.instance.app_status == 'Draft':
+                    self.instance.app_status = "Submitted"
+                    self.instance.app_no = "APP/" + str(datetime.datetime.now().year) + "/" + "{:02d}".format(datetime.datetime.now().month) + "/" + "{:04d}".format(self.instance.id)
+
+                elif self.instance.app_status == 'Submitted':
+                    self.instance.app_status = 'Verify Documents'
+
+                elif self.instance.app_status == 'Verify Documents':
+                    self.instance.app_status = 'Verify Requirements'
+
+                elif self.instance.app_status == 'Verify Requirements':
+                    self.instance.app_status = 'Issue the Decision'
+
+                elif self.instance.app_status == 'Issue the Decision':
+                    self.instance.app_status = 'Payment Fees'
+
+                elif self.instance.app_status == 'Payment Fees':
+                    self.instance.app_status = 'Request Manager Approval/Reject'
+
+                elif self.instance.app_status == 'Request Manager Approval/Reject':
+                    if self.instance.intial_approval == 'approve':
+                        self.instance.app_status = 'Final Approval'
+                    else:
+                        self.instance.app_status = 'Rejected'
+        elif self.fields['app_type'].initial == 'Renewal License':
+            # self.user_id = self.request.user
+
+            if self.instance.id:  # if true then this is update form
+                if self.instance.app_status == 'Draft':
+                    self.instance.app_status = "Submitted"
+                    self.instance.app_no = "APP/" + str(datetime.datetime.now().year) + "/" + "{:02d}".format(datetime.datetime.now().month) + "/" + "{:04d}".format(self.instance.id)
+
+                elif self.instance.app_status == 'Submitted':
+                    self.instance.app_status = 'Verify Documents'
+
+                elif self.instance.app_status == 'Verify Documents':
+                    self.instance.app_status = 'Verify Statements'
+
+                elif self.instance.app_status == 'Verify Statements':
+                    self.instance.app_status = 'Issue the Decision'
+
+                elif self.instance.app_status == 'Issue the Decision':
+                    self.instance.app_status = 'Payment Fees'
+
+                elif self.instance.app_status == 'Payment Fees':
+                    self.instance.app_status = 'Request Manager Approval/Reject'
+
+                elif self.instance.app_status == 'Request Manager Approval/Reject':
+                    if self.instance.intial_approval == 'approve':
+                        self.instance.app_status = 'Renewal license Approval'
+                    else:
+                        self.instance.app_status = 'Rejected'
+
+        elif self.fields['app_type'].initial == 'Cancel License':
+            # self.user_id = self.request.user
+
+            if self.instance.id:  # if true then this is update form
+                if self.instance.app_status == 'Draft':
+                    self.instance.app_status = "Submitted"
+                    self.instance.app_no = "APP/" + str(datetime.datetime.now().year) + "/" + "{:02d}".format(datetime.datetime.now().month) + "/" + "{:04d}".format(self.instance.id)
+
+                elif self.instance.app_status == 'Submitted':
+                    self.instance.app_status = 'Verify Documents'
+
+                elif self.instance.app_status == 'Verify Documents':
+                    self.instance.app_status = 'Verify Statements'
+
+                elif self.instance.app_status == 'Verify Statements':
+                    self.instance.app_status = 'Issue the Decision'
+
+                elif self.instance.app_status == 'Issue the Decision':
+                    self.instance.app_status = 'Payment Fees'
+
+                elif self.instance.app_status == 'Payment Fees':
+                    self.instance.app_status = 'Request Manager Approval/Reject'
+
+                elif self.instance.app_status == 'Request Manager Approval/Reject':
+                    if self.instance.intial_approval == 'approve':
+                        self.instance.app_status = 'Cancel License Approval'
+                    else:
+                        self.instance.app_status = 'Rejected'
 
         super().save(*args, **kwargs)

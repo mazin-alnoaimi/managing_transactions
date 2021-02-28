@@ -131,6 +131,13 @@ def application_form(request, id=0):
         if id == 0:
             print("====================================================================== 7")
             form = ApplicationForm(request.POST)
+            if form.instance.applicant_id.has_application:
+                messages.warning(self.request, _('This applicant either received the license or has an application on going'))
+                return super().form_invalid(form)
+
+            if not form.instance.applicant_id.nationality == 'bahraini':
+                messages.warning(self.request, f'This application accept Bahrain nationality only')
+                return super().form_invalid(form)
         else:
             print("====================================================================== 8")
             application = Application.objects.get(pk=id)
@@ -139,6 +146,7 @@ def application_form(request, id=0):
         if form.is_valid():
             print("====================================================================== 9")
             form.user_id = request.user
+
             form.save()
         else:
             print("====================================================================== 10")
@@ -153,20 +161,7 @@ def application_delete(request,id):
 
 
 
-class ApplicationListView(LoginRequiredMixin, ListView):
-    model = Application
-    template_name = 'app/application.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'applications'
-    # ordering = ['-date_posted']
 
-    def get_queryset(self):
-        if not self.request.user.is_staff:
-            return super(ApplicationListView, self).get_queryset().filter(user_id=self.request.user)
-        else:
-            return super(ApplicationListView, self).get_queryset()
-
-class ApplicationDetailView(DetailView):
-    model = Application
 
 class ApplicationCreateView(LoginRequiredMixin, CreateView):
 
