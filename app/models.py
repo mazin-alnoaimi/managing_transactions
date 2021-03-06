@@ -85,6 +85,7 @@ class Organization(models.Model):
         return self.full_en_name
 
 class Application(models.Model):
+
     activity_type_list = (
         ('demostic', 'Demostic Labour Employment'),
         ('foreign', 'Foreign Labour Employement'),
@@ -101,14 +102,23 @@ class Application(models.Model):
         ('reject', 'Reject')
     )
 
+    app_type_list = (
+        ('initial','Initial Approval'),
+        ('final','Final Approval'),
+        ('renew','Renewal License'),
+        ('cancel','Cancel License')
+    )
+
     app_no = models.CharField(_("Application No"), max_length=50, default='Draft Application')
     app_date = models.DateField(_("Application Date"), default=datetime.date.today)
-    app_type = models.CharField(_("Application Type"), max_length=50, default='Initial Approval')
-    app_status = models.CharField(_("Status"), max_length=50, default='Draft')
+    app_type = models.CharField(_("Application Type"), max_length=50, default='Initial Approval', choices=app_type_list)
+    app_status_index = models.IntegerField(_("Status No"), default=0)
+    app_current_status = models.CharField(_("Status"), max_length=50, default='Draft')
+    app_next_status = models.CharField(_("Status"), max_length=50, default='Draft')
     activty_type = models.CharField(_("Activity Type"), max_length=50, choices=activity_type_list)
     staff_comments = models.TextField(_("Comments"), blank=True)
     manager_comments = models.TextField(_("Manager Comments"), blank=True)
-    intial_approval = models.CharField(_("Manager Decision"), max_length=50, choices=intial_approval_list, blank=True)
+    approval = models.CharField(_("Manager Decision"), max_length=50, choices=intial_approval_list, blank=True)
 
     financial_guarantee = models.CharField(_("Financial Guarantee"), max_length=50, choices=financial_guarantee_list, blank=True)
     financial_guarantee_expiry_date = models.DateField(_("Financial Guarantee Expiry Date"), null=True, blank=True)

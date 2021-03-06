@@ -14,14 +14,22 @@
             {{ form.app_type|as_crispy_field }}
         </div>
         <div class="form-group col-md-6 mb-0">
-            {{ form.app_status|as_crispy_field }}
+            {{ form.app_current_status|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.app_next_status|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.app_status_index|as_crispy_field }}
         </div>
         <div class="form-group col-md-6 mb-0">
             {{ form.activty_type|as_crispy_field }}
         </div>
-        <div class="form-group col-md-6 mb-0"></div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.email|as_crispy_field }}
+        </div>
 
-        {% if form.instance.app_type != 'Initial Approval' %}
+        {% if form.instance.app_type != 'initial' %}
         <div class="form-group col-md-12">
             <h3>Company Details</h3>
         </div>
@@ -42,7 +50,7 @@
             {{ form.license_expiry_date|as_crispy_field }}
         </div>
 
-        {% if form.instance.app_type != 'Initial Approval' %}
+        {% if form.instance.app_type != 'initial' %}
         <div class="form-group col-md-12">
             <h3>Address Details</h3>
         </div>
@@ -66,7 +74,7 @@
             {{ form.contact2|as_crispy_field }}
         </div>
 
-        {% if form.instance.app_type != 'Initial Approval' %}
+        {% if form.instance.app_type != 'initial' %}
         <div class="form-group col-md-12">
             <h3>Female Accommodation Address Details</h3>
         </div>
@@ -91,11 +99,8 @@
         </div>
 
 
-        <div class="form-group col-md-6 mb-0">
-            {{ form.email|as_crispy_field }}
-        </div>
-        <div class="form-group col-md-6 mb-0">
-        </div>
+
+
         <div class="form-group col-md-6 mb-0">
             {{ form.financial_guarantee|as_crispy_field }}
         </div>
@@ -111,7 +116,7 @@
             {{ form.manager_comments|as_crispy_field }}
         </div>
         <div class="form-group col-md-12 mb-0">
-            {{ form.intial_approval|as_crispy_field }}
+            {{ form.approval|as_crispy_field }}
         </div>
         {% endif %} {% endif %}
         <div class="form-group col-md-4 mb-0">
@@ -143,80 +148,20 @@
         <div class="col-md-8">
             {% if user.is_authenticated %}
                 {% if user.is_staff %}
-                    {% if form.instance.app_type == 'Initial Approval' %}
-                        {% if form.instance.app_status == 'Draft' %}
-                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Generate Application Code</button>
-                            {% elif form.instance.app_status == 'Submitted' %}
-                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Violations Verification</button>
-                            {% elif form.instance.app_status == 'Violations Verification' %}
-                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Request Statements</button>
-                            {% elif form.instance.app_status == 'Request Statements' %}
-                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Review Documents</button>
-                            {% elif form.instance.app_status == 'Review Documents' %}
-                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Request Manager Approval/Reject</button>
-                            {% elif form.instance.app_status == 'Request Manager Approval/Reject' %}
-                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Intial Approval Completed</button>
-                            {% elif form.instance.app_status == 'Intial Approval' %}
-                            <p>Application has been closed, please check the status</p>
+                    {% if form.instance.app_type == 'initial' %}
+                        {% if form.instance.app_status_index < 7 %}
+                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> {{form.instance.app_next_status}}</button>
                         {% endif %}
-                    {% elif form.instance.app_type == 'Final Approval' %}
-                        {% if form.instance.app_status == 'Draft' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Generate Application Code</button>
-                        {% elif form.instance.app_status == 'Submitted' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Verify Documents</button>
-                        {% elif form.instance.app_status == 'Verify Documents' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Verify Requirements</button>
-                        {% elif form.instance.app_status == 'Verify Requirements' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Issue the Decision</button>
-                        {% elif form.instance.app_status == 'Issue the Decision' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Payment Fees</button>
-                        {% elif form.instance.app_status == 'Payment Fees' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Request Manager Approval/Reject</button>
-                        {% elif form.instance.app_status == 'Request Manager Approval/Rejcet' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Final Approval Completed</button>
-                        {% elif form.instance.app_status == 'Final Approval' %}
-                        <p>Application has been closed, please check the status</p>
-                        {% endif %}
-                    {% elif form.instance.app_type == 'Renewal License' %}
-                        {% if form.instance.app_status == 'Draft' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Generate Application Code</button>
-                        {% elif form.instance.app_status == 'Submitted' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Verify Documents</button>
-                        {% elif form.instance.app_status == 'Verify Documents' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Verify Statements</button>
-                        {% elif form.instance.app_status == 'Verify Statements' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Issue the Decision</button>
-                        {% elif form.instance.app_status == 'Issue the Decision' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Payment Fees</button>
-                        {% elif form.instance.app_status == 'Payment Fees' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Request Manager Approval/Reject</button>
-                        {% elif form.instance.app_status == 'Request Manager Approval/Rejcet' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Final Approval Completed</button>
-                        {% elif form.instance.app_status == 'Renewal license Approval' %}
-                        <p>Application has been closed, please check the status</p>
-                        {% endif %}
-                    {% elif form.instance.app_type == 'Cancel License' %}
-                        {% if form.instance.app_status == 'Draft' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Generate Application Code</button>
-                        {% elif form.instance.app_status == 'Submitted' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Verify Documents</button>
-                        {% elif form.instance.app_status == 'Verify Documents' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Verify Statements</button>
-                        {% elif form.instance.app_status == 'Verify Statements' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Issue the Decision</button>
-                        {% elif form.instance.app_status == 'Issue the Decision' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Payment Fees</button>
-                        {% elif form.instance.app_status == 'Payment Fees' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Request Manager Approval/Reject</button>
-                        {% elif form.instance.app_status == 'Request Manager Approval/Rejcet' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Final Approval Completed</button>
-                        {% elif form.instance.app_status == 'Cancel License Approval' %}
-                        <p>Application has been closed, please check the status</p>
+                    {% elif form.instance.app_type == 'final'  %}
+                        {% if form.instance.app_status_index < 8 %}
+                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> {{form.instance.app_next_status}}</button>
                         {% endif %}
                     {% endif %}
                 {% else %}
-                    {% if form.instance.app_status == 'Draft' %}
-                        <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Submit</button>
+                    {% if form.instance.app_type == 'Initial Approval' %}
+                        {% if form.instance.app_current_status == 'Draft' %}
+                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Submit</button>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             {% endif %}
