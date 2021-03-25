@@ -111,7 +111,7 @@ class Application(models.Model):
 
     app_no = models.CharField(_("Application No"), max_length=50, default='Draft Application')
     app_date = models.DateField(_("Application Date"), default=datetime.date.today)
-    app_type = models.CharField(_("Application Type"), max_length=50, default='Initial Approval', choices=app_type_list)
+    app_type = models.CharField(_("Application Type"), max_length=50, choices=app_type_list)
     app_status_index = models.IntegerField(_("Status No"), default=0)
     app_current_status = models.CharField(_("Status"), max_length=50, default='Draft')
     app_next_status = models.CharField(_("Status"), max_length=50, default='Draft')

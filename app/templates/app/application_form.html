@@ -156,13 +156,17 @@
                         {% if form.instance.app_status_index < 8 %}
                             <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> {{form.instance.app_next_status}}</button>
                         {% endif %}
+                    {% elif form.instance.app_type == 'renew'  %}
+                        {% if form.instance.app_status_index < 8 %}
+                            <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> {{form.instance.app_next_status}}</button>
+                        {% endif %}
                     {% endif %}
                 {% else %}
-                    {% if form.instance.app_type == 'Initial Approval' %}
+
                         {% if form.instance.app_current_status == 'Draft' %}
                             <button type="submit" class="btn btn-success btn-block btn-lg"><i class="fas fa-database"></i> Submit</button>
                         {% endif %}
-                    {% endif %}
+
                 {% endif %}
             {% endif %}
         </div>
