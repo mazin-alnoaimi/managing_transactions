@@ -31,46 +31,38 @@ nationality_list = (
 status_list = (
     ('Draft'),
     ('Submitted'),
-    ('Application Code'),
-    ('Violations Verification'),
-    ('Request Statements'),
-    ('Review Documents'),
-    ('Request Manager Approval/Reject'),
+    ('Verification'),       # add first formula         L1 emp
+    ('Request Statements'), # add second formula        L2 emp
+    ('Request Manager Approval/Reject'), #              L3 emp
     ('Initial Approval Completed'),
 )
 
 final_approval_status_list = (
     ('Draft'),
     ('Submitted'),
-    ('Application Code'),
-    ('Verify Document'),
-    ('Verify Requirements'),
-    ('Issue the Decision'),
+    ('Verification'),       # add first formula         L1 emp
+    ('Request Statements'), # add second formula        L2 emp
     ('Payment Fees'),
-    ('Request Manager Approval/Reject'),
+    ('Request Manager Approval/Reject'),#               L3 emp
     ('Final Approval Completed'),
 )
 
 renew_license_status_list = (
     ('Draft'),
     ('Submitted'),
-    ('Application Code'),
-    ('Verify Document'),
-    ('Verify Requirements'),
-    ('Issue the Decision'),
+    ('Verification'),       # add first formula         L1 emp
+    ('Request Statements'), # add second formula        L2 emp
     ('Payment Fees'),
-    ('Request Manager Approval/Reject'),
-    ('Renewal license Completed'),
+    ('Request Manager Approval/Reject'),#               L3 emp
+    ('Renewal License Completed'),
 )
 
 cancel_license_status_list = (
     ('Draft'),
     ('Submitted'),
-    ('Application Code'),
-    ('Verify Document'),
-    ('Verify Requirements'),
-    ('Issue the Decision'),
-    ('Request Manager Approval/Reject'),
+    ('Verification'),       # add first formula         L1 emp
+    ('Request Statements'), # add second formula        L2 emp
+    ('Request Manager Approval/Reject'),#               L3 emp
     ('Cancel license Completed'),
 )
 
@@ -210,6 +202,20 @@ class ApplicationForm(forms.ModelForm):
         super(ApplicationForm, self).__init__(*args, **kwargs)
         self.fields['app_status_index'].widget = forms.HiddenInput()
         self.fields['app_next_status'].widget = forms.HiddenInput()
+
+        if not self.instance.id:
+            self.fields['staff_comments'].widget = forms.HiddenInput()
+            self.fields['manager_comments'].widget = forms.HiddenInput()
+            self.fields['approval'].widget = forms.HiddenInput()
+            self.fields['financial_guarantee'].widget = forms.HiddenInput()
+            self.fields['financial_guarantee_expiry_date'].widget = forms.HiddenInput()
+            self.fields['qsreq'].widget = forms.HiddenInput()
+            self.fields['qnreq'].widget = forms.HiddenInput()
+            self.fields['dreq'].widget = forms.HiddenInput()
+            self.fields['qsrec'].widget = forms.HiddenInput()
+            self.fields['qnrec'].widget = forms.HiddenInput()
+            self.fields['drec'].widget = forms.HiddenInput()
+
         if self.instance.app_type == 'initial':
             self.fields['cr'].widget = forms.HiddenInput()
             self.fields['cr_reg_date'].widget = forms.HiddenInput()
@@ -412,7 +418,7 @@ class ApplicationForm(forms.ModelForm):
                     self.fields['qnrec'].widget = forms.HiddenInput()
                     self.fields['drec'].widget = forms.HiddenInput()
                 elif self.instance.app_current_status == 'Submitted':
-                    self.fields['staff_comments'].widget = forms.HiddenInput()
+                    # self.fields['staff_comments'].widget = forms.HiddenInput()
                     self.fields['manager_comments'].widget = forms.HiddenInput()
                     self.fields['approval'].widget = forms.HiddenInput()
                     self.fields['financial_guarantee'].widget = forms.HiddenInput()
@@ -424,7 +430,7 @@ class ApplicationForm(forms.ModelForm):
                     self.fields['qnrec'].widget = forms.HiddenInput()
                     self.fields['drec'].widget = forms.HiddenInput()
                 elif self.instance.app_current_status == 'Application Code':
-                    self.fields['staff_comments'].widget = forms.HiddenInput()
+                    # self.fields['staff_comments'].widget = forms.HiddenInput()
                     self.fields['manager_comments'].widget = forms.HiddenInput()
                     self.fields['approval'].widget = forms.HiddenInput()
                     self.fields['financial_guarantee'].widget = forms.HiddenInput()
@@ -435,30 +441,28 @@ class ApplicationForm(forms.ModelForm):
                     self.fields['qsrec'].widget = forms.HiddenInput()
                     self.fields['qnrec'].widget = forms.HiddenInput()
                     self.fields['drec'].widget = forms.HiddenInput()
-                elif self.instance.app_current_status == 'Violations Verification':
+                elif self.instance.app_current_status == 'Verify Document':
                     self.fields['manager_comments'].widget = forms.HiddenInput()
                     self.fields['approval'].widget = forms.HiddenInput()
                     self.fields['financial_guarantee'].widget = forms.HiddenInput()
                     self.fields['financial_guarantee_expiry_date'].widget = forms.HiddenInput()
-                    self.fields['qsreq'].widget = forms.HiddenInput()
-                    self.fields['qnreq'].widget = forms.HiddenInput()
-                    self.fields['dreq'].widget = forms.HiddenInput()
+
                     self.fields['qsrec'].widget = forms.HiddenInput()
                     self.fields['qnrec'].widget = forms.HiddenInput()
                     self.fields['drec'].widget = forms.HiddenInput()
-                elif self.instance.app_current_status == 'Request Statements':
+                elif self.instance.app_current_status == 'Verify Requirements':
                     self.fields['manager_comments'].widget = forms.HiddenInput()
                     self.fields['approval'].widget = forms.HiddenInput()
                     self.fields['financial_guarantee'].widget = forms.HiddenInput()
                     self.fields['financial_guarantee_expiry_date'].widget = forms.HiddenInput()
-                elif self.instance.app_current_status == 'Review Documents':
-                    self.fields['manager_comments'].widget = forms.HiddenInput()
-                    self.fields['approval'].widget = forms.HiddenInput()
-                    self.fields['financial_guarantee'].widget = forms.HiddenInput()
-                    self.fields['financial_guarantee_expiry_date'].widget = forms.HiddenInput()
-                elif self.instance.app_current_status == 'Request Manager Approval/Reject':
-                    self.fields['financial_guarantee'].widget = forms.HiddenInput()
-                    self.fields['financial_guarantee_expiry_date'].widget = forms.HiddenInput()
+                # elif self.instance.app_current_status == 'Review Documents':
+                #     self.fields['manager_comments'].widget = forms.HiddenInput()
+                #     self.fields['approval'].widget = forms.HiddenInput()
+                #     self.fields['financial_guarantee'].widget = forms.HiddenInput()
+                #     self.fields['financial_guarantee_expiry_date'].widget = forms.HiddenInput()
+                # elif self.instance.app_current_status == 'Request Manager Approval/Reject':
+                #     self.fields['financial_guarantee'].widget = forms.HiddenInput()
+                #     self.fields['financial_guarantee_expiry_date'].widget = forms.HiddenInput()
 
             #open new form for entering new date -- no instance exist
             elif self.fields['app_current_status'].initial == 'Draft':
@@ -551,6 +555,7 @@ class ApplicationForm(forms.ModelForm):
                 self.fields['approval'].widget = forms.HiddenInput()
                 self.fields['financial_guarantee'].widget = forms.HiddenInput()
                 self.fields['financial_guarantee_expiry_date'].widget = forms.Hidd
+
     def clean(self):
         cleaned_data = super().clean()
         applicant_id = cleaned_data.get("applicant_id")
@@ -558,6 +563,24 @@ class ApplicationForm(forms.ModelForm):
         if applicant_id.has_application:
             messages.warning(self.request, _('This applicant either received the license or has an application on going'))
             self.add_error('applicant_id', "Application Exist")
+
+        qsreq = cleaned_data.get("qsreq")
+        qnreq = cleaned_data.get("qnreq")
+
+        qsrec = cleaned_data.get("qsrec")
+        qnrec = cleaned_data.get("qnrec")
+
+        if qnreq <= 0:
+            self.add_error('qnreq','Value should be more than 0')
+
+        if qnrec <= 0:
+            self.add_error('qnrec','Value should be more than 0')
+
+        if qnreq < qsreq:
+            self.add_error('qnreq', 'Value should equal or greater than the Uploaded Docuements')
+
+        if qnrec < qsrec:
+            self.add_error('qnrec', 'Value should equal or greater than the Satisfying Recommendations')
 
     def save(self, *args, **kwargs):
         if self.instance.app_type == 'initial':
@@ -583,14 +606,18 @@ class ApplicationForm(forms.ModelForm):
 
         elif self.instance.app_type == 'final':
             if self.instance.id:  # if true then this is update form
-                if self.instance.app_status_index < 8:
+                if self.instance.app_status_index <= 8:
                     self.instance.app_current_status = final_approval_status_list[self.instance.app_status_index]
-                    self.instance.app_next_status = final_approval_status_list[self.instance.app_status_index+1]
-                    self.instance.app_status_index = self.instance.app_status_index +1
+                    if self.instance.app_status_index < 8:
+                        self.instance.app_next_status = final_approval_status_list[self.instance.app_status_index+1]
+                        self.instance.app_status_index = self.instance.app_status_index +1
+                    else:
+                        self.instance.app_next_status = final_approval_status_list[self.instance.app_status_index]
+                        self.instance.app_status_index = self.instance.app_status_index
 
                 if self.instance.app_current_status == 'Submitted':
-                    self.instance.qsreq = 4
-                    self.instance.qsrec = 4
+                    self.instance.qsreq = 0
+                    self.instance.qsrec = 0
                 if self.instance.app_current_status == 'Application Code':
                     self.instance.app_no = "APP/" + str(datetime.datetime.now().year) + "/" + "{:02d}".format(datetime.datetime.now().month) + "/" + "{:04d}".format(self.instance.id)
                 if self.instance.app_current_status == 'Request Statements':
@@ -603,14 +630,18 @@ class ApplicationForm(forms.ModelForm):
 
         elif self.instance.app_type == 'renew':
             if self.instance.id:  # if true then this is update form
-                if self.instance.app_status_index < 8:
+                if self.instance.app_status_index <= 8:
                     self.instance.app_current_status = final_approval_status_list[self.instance.app_status_index]
-                    self.instance.app_next_status = final_approval_status_list[self.instance.app_status_index+1]
-                    self.instance.app_status_index = self.instance.app_status_index +1
+                    if self.instance.app_status_index < 8:
+                        self.instance.app_next_status = final_approval_status_list[self.instance.app_status_index+1]
+                        self.instance.app_status_index = self.instance.app_status_index +1
+                    else:
+                        self.instance.app_next_status = final_approval_status_list[self.instance.app_status_index]
+                        self.instance.app_status_index = self.instance.app_status_index
 
                 if self.instance.app_current_status == 'Submitted':
-                    self.instance.qsreq = 4
-                    self.instance.qsrec = 4
+                    self.instance.qsreq = 0
+                    self.instance.qsrec = 0
                 if self.instance.app_current_status == 'Application Code':
                     self.instance.app_no = "APP/" + str(datetime.datetime.now().year) + "/" + "{:02d}".format(datetime.datetime.now().month) + "/" + "{:04d}".format(self.instance.id)
                 if self.instance.app_current_status == 'Request Statements':
