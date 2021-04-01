@@ -476,7 +476,7 @@ class ApplicationForm(forms.ModelForm):
                 self.fields['manager_comments'].widget = forms.HiddenInput()
                 self.fields['approval'].widget = forms.HiddenInput()
                 self.fields['financial_guarantee'].widget = forms.HiddenInput()
-                self.fields['financial_guarantee_expiry_date'].widget = forms.Hidd
+                self.fields['financial_guarantee_expiry_date'].widget = forms.HiddenInput()
 
         elif self.instance.app_type == 'cancel':
             #open for update an exist record(instance)
@@ -554,7 +554,7 @@ class ApplicationForm(forms.ModelForm):
                 self.fields['manager_comments'].widget = forms.HiddenInput()
                 self.fields['approval'].widget = forms.HiddenInput()
                 self.fields['financial_guarantee'].widget = forms.HiddenInput()
-                self.fields['financial_guarantee_expiry_date'].widget = forms.Hidd
+                self.fields['financial_guarantee_expiry_date'].widget = forms.HiddenInput()
 
     def clean(self):
         cleaned_data = super().clean()
