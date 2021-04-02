@@ -1,9 +1,8 @@
+import datetime
 from django import forms
 from django.utils.translation import gettext as _
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-
-import datetime
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import User
 from .models import (Applicant, Organization, Application)
@@ -65,7 +64,6 @@ cancel_license_status_list = (
     ('Request Manager Approval/Reject'),#               L3 emp
     ('Cancel license Completed'),
 )
-
 
 class ApplicantForm(forms.ModelForm):
 
@@ -561,7 +559,7 @@ class ApplicationForm(forms.ModelForm):
         applicant_id = cleaned_data.get("applicant_id")
 
         if applicant_id.has_application:
-            messages.warning(self.request, _('This applicant either received the license or has an application on going'))
+            # messages.warning(self.request, _('This applicant either received the license or has an application on going'))
             self.add_error('applicant_id', "Application Exist")
 
         qsreq = cleaned_data.get("qsreq")

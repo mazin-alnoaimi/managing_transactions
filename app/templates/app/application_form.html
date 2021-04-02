@@ -117,7 +117,7 @@
             {{ form.staff_comments|as_crispy_field }}
         </div>
             {% endif %}
-            {% if request.user|has_group:"manager" %}
+            {% if request.user|has_group:"managers" %}
         <div class="form-group col-md-12 mb-0">
             {{ form.manager_comments|as_crispy_field }}
         </div>
@@ -126,7 +126,7 @@
         </div>
             {% endif %}
 
-            {% if request.user|has_group:"level1" %}
+            {% if request.user|has_group:"level 1" %}
         <div class="form-group col-md-4 mb-0">
             {{ form.qsreq|as_crispy_field }}
         </div>
@@ -138,8 +138,7 @@
             {{ form.dreq|as_crispy_field }}
         </div>
             {% endif %}
-        {% if user.is_authenticated %}
-            {% if request.user|has_group:"level2" %}
+            {% if request.user|has_group:"level 2" %}
          <div class="form-group col-md-4 mb-0">
             {{ form.qsrec|as_crispy_field }}
         </div>
